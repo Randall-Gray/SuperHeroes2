@@ -5,44 +5,65 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SuperHeroes2.Data;
+using SuperHeroes2.Models;
 
 namespace SuperHeroes2.Controllers
 {
     public class SuperHeroesController : Controller
     {
+        // Member variables
         private ApplicationDbContext _context { get; }
 
+        // constructor
         public SuperHeroesController(ApplicationDbContext context)
         {
             _context = context;
         }
+
+        // Member methods
         // GET: SuperHeroes
         public ActionResult Index()
         {
-            return View();
+            List<SuperHero> superHeroesList;
+
+            superHeroesList = _context.SuperHeroes.ToList();
+
+            return View(superHeroesList);
         }
 
         // GET: SuperHeroes/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            try
+            {
+                SuperHero superHero = _context.SuperHeroes.Where(s => s.Id == id).SingleOrDefault();
+
+                return View(superHero);
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: SuperHeroes/Create
         public ActionResult Create()
         {
-            return View();
+            SuperHero superHero = new SuperHero();
+
+            return View(superHero);
         }
 
         // POST: SuperHeroes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(SuperHero superHero)
         {
             try
             {
-                // TODO: Add insert logic here
-
+                _context.SuperHeroes.Add(superHero);
+                _context.SaveChanges();
+        
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -54,17 +75,30 @@ namespace SuperHeroes2.Controllers
         // GET: SuperHeroes/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            try
+            {
+                SuperHero superHero = _context.SuperHeroes.Where(s => s.Id == id).SingleOrDefault();
+
+                return View(superHero);
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: SuperHeroes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, [Bind("Id,Name,AlterEgo,PrimaryAbility,SecondaryAbility,CatchPhrase")] SuperHero superHero)
         {
+            if (id != superHero.Id)
+                return NotFound();
+
             try
             {
-                // TODO: Add update logic here
+                _context.Update(superHero);
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -77,17 +111,30 @@ namespace SuperHeroes2.Controllers
         // GET: SuperHeroes/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            try
+            {
+                SuperHero superHero = _context.SuperHeroes.Where(s => s.Id == id).SingleOrDefault();
+
+                return View(superHero);
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: SuperHeroes/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, SuperHero superHero)
         {
+            if (id != superHero.Id)
+                return NotFound();
+
             try
             {
-                // TODO: Add delete logic here
+                _context.SuperHeroes.Remove(superHero);
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }

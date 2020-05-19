@@ -62,7 +62,7 @@ namespace SuperHeroes2
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=SuperHeroes}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
